@@ -54,7 +54,8 @@
           height: getBarHeight(item.quantity),
         }"
       >
-        <div class="chart-label">{{ item.date }}</div>
+        <div class="bar-total">{{ item.quantity }}</div>
+        <div class="bar-date">{{ formatDate(item.date, "dd MMM") }}</div>
       </div>
     </div>
     <v-table v-if="lastBiberons.length > 0">
@@ -88,6 +89,8 @@ import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import { db } from "@/utils/useFirebase";
 import { setDoc, doc, getDocs, collection } from "firebase/firestore";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale"; // Import the French locale module
 
 export default {
   setup() {
@@ -101,6 +104,7 @@ export default {
     const targetValue = ref(110);
     const maxHeight = ref(100);
     const aggregatedBiberons = ref();
+    const frenchLocale = fr;
 
     onMounted(() => {
       currentDate.value = getCurrentDate();
@@ -202,6 +206,10 @@ export default {
       });
     });
 
+    function formatDate(date, formatStr, locale) {
+      return format(new Date(date), formatStr, { locale });
+    }
+
     return {
       quantity,
       currentDate,
@@ -213,6 +221,8 @@ export default {
       aggregatedBiberons: computed(() =>
         aggregateQuantities(lastBiberons.value)
       ),
+      formatDate,
+      frenchLocale,
     };
   },
 };
@@ -236,7 +246,12 @@ export default {
   border-radius: 5px;
 }
 
-.chart-label {
+.bar-total {
+  margin-top: auto;
+}
+
+.bar-date {
   margin-top: 5px;
+  text-align: center;
 }
 </style>
