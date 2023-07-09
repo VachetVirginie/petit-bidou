@@ -1,10 +1,28 @@
 <template>
   <div>
     <h1>Page de connexion</h1>
-    <input type="email" v-model="userEmail" placeholder="Email" />
-    <input type="password" v-model="password" placeholder="Mot de passe" />
-    <button @click="onLoginUser">Se connecter</button>
-    <button @click="onCreateUser">Creer un compte</button>
+    <v-sheet width="300" class="mx-auto">
+      <v-text-field v-model="userEmail" label="Email"></v-text-field>
+      <v-text-field v-model="password" label="Mot de passe"></v-text-field>
+      <div class="d-flex flex-column">
+        <v-btn
+          class="text-none text-subtitle-1"
+          color="success"
+          block
+          @click="onLoginUser"
+        >
+          Se connecter
+        </v-btn>
+        <v-btn
+          class="text-none text-subtitle-1 mt-4"
+          color="success"
+          block
+          @click="onCreateUser"
+        >
+          Creer un compte
+        </v-btn>
+      </div>
+    </v-sheet>
   </div>
 </template>
 

@@ -1,80 +1,156 @@
 <template>
   <div>
-    <h1>Enregistrer la consomation de lait</h1>
-    <form @submit.prevent="saveMilkDrink">
-      <label>Date du jour: {{ currentDate }}</label>
-      <br />
-      <label>Heure du moment: {{ currentTime }}</label>
-      <br />
-      <label>Quantité de lait bu (en ml):</label>
-      <input type="number" v-model="quantity" required />
-      <br />
-      <button type="submit">Enregistrer</button>
-    </form>
-    <svg :width="svgSize" :height="svgSize">
-      <rect :width="fillSize" :height="svgSize" :fill="color" />
-    </svg>
-    <pre> {{ lastBiberons }} </pre>
+    <h1>Biberons</h1>
+    <v-dialog transition="dialog-bottom-transition" width="auto">
+      <template v-slot:activator="{ props }">
+        <v-btn color="success" v-bind="props">Ajouter biberon</v-btn>
+      </template>
+      <template v-slot:default="{ isActive }">
+        <v-card>
+          <v-toolbar color="success" title="Enregister un biberon"></v-toolbar>
+          <v-card-text>
+            <div class="text-h2 pa-12">
+              <v-sheet width="300" class="mx-auto">
+                <v-form fast-fail @submit.prevent="saveMilkDrink">
+                  <v-text-field v-model="currentDate"></v-text-field>
+
+                  <v-text-field v-model="currentTime"></v-text-field>
+
+                  <v-text-field
+                    v-model="quantity"
+                    type="number"
+                    label="Quantité de lait bu (en ml)"
+                    required
+                  ></v-text-field>
+
+                  <v-btn
+                    type="submit"
+                    block
+                    color="success"
+                    @click="isActive.value = false"
+                    class="mt-2"
+                    >Enregistrer</v-btn
+                  >
+                </v-form>
+              </v-sheet>
+            </div>
+          </v-card-text>
+          <v-card-actions class="justify-end">
+            <v-btn variant="text" color="error" @click="isActive.value = false"
+              >Fermer</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+    <h2>Historique</h2>
+    <v-table v-if="lastBiberons.length > 0">
+      <thead>
+        <tr>
+          <th class="text-center">Date</th>
+          <th class="text-center">Quantite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in lastBiberons" :key="item.date">
+          <td>{{ item.date }}</td>
+          <td>{{ item.quantity }}</td>
+        </tr>
+      </tbody>
+    </v-table>
+    <v-alert
+      v-else
+      type="error"
+      text="Pas d'elements enregistres"
+      width="300"
+      class="mx-auto py-6 my-6"
+    ></v-alert>
   </div>
 </template>
 
-<script setup>
+<script>
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import { db } from "@/utils/useFirebase";
-import { getDocs, collection } from "firebase/firestore";
-import { addDrinkedMilk } from "@/utils/useFirestore";
-import { getCurrentDate, getCurrentTime } from "@/utils/useCommons";
+import { setDoc, doc, getDocs, collection } from "firebase/firestore";
 
-const quantity = ref(0);
-const currentDate = ref("");
-const currentTime = ref("");
-const store = useStore();
-const userId = computed(() => store.state.userId);
-const lastBiberons = ref([]);
+export default {
+  setup() {
+    const quantity = ref(0);
+    const currentDate = ref("");
+    const currentTime = ref("");
+    const store = useStore();
+    const userId = computed(() => store.state.userId);
+    const lastBiberons = ref([]);
+    const isActive = ref(false);
 
-onMounted(() => {
-  currentDate.value = getCurrentDate();
-  currentTime.value = getCurrentTime();
-});
-
-function saveMilkDrink() {
-  addDrinkedMilk(
-    userId.value,
-    quantity.value,
-    currentDate.value,
-    currentTime.value
-  );
-}
-
-async function getDrinkedMilk() {
-  const biberonsCol = collection(db, "biberons");
-  const biberonsSnapshot = await getDocs(biberonsCol);
-  const biberonsList = biberonsSnapshot.docs.map((doc) => doc.data());
-  return biberonsList;
-}
-
-onMounted(() => {
-  getDrinkedMilk().then((biberons) => {
-    lastBiberons.value = biberons.filter((biberon) => {
-      return (
-        biberon.userId === userId.value && biberon.date === currentDate.value
-      );
+    onMounted(() => {
+      currentDate.value = getCurrentDate();
+      currentTime.value = getCurrentTime();
     });
-  });
-});
 
-const svgSize = ref(200);
-const fillSize = computed(() => (quantity.value / 100) * svgSize.value);
-const color = computed(() => {
-  if (quantity.value < 25) {
-    return "red";
-  } else if (quantity.value < 50) {
-    return "orange";
-  } else if (quantity.value < 95) {
-    return "yellow";
-  } else {
-    return "green";
-  }
-});
+    function getCurrentDate() {
+      const now = new Date();
+      return now.toISOString().split("T")[0];
+    }
+
+    function getCurrentTime() {
+      const now = new Date();
+      return now.toLocaleTimeString();
+    }
+
+    function saveMilkDrink() {
+      setDoc(
+        doc(
+          db,
+          "biberons",
+          (userId.value, Math.random() + 1).toString(36).substring(4)
+        ),
+        {
+          userId: userId.value,
+          quantity: parseInt(quantity.value),
+          date: currentDate.value + " " + currentTime.value,
+        },
+        { merge: true }
+      ).then(() => {
+        quantity.value = 0;
+        getBiberons().then((biberons) => {
+          lastBiberons.value = biberons.filter((biberon) => {
+            return biberon.userId === userId.value;
+          });
+        });
+        isActive.value = false;
+      });
+    }
+
+    async function getBiberons() {
+      const biberons = [];
+      const querySnapshot = await getDocs(collection(db, "biberons"));
+      querySnapshot.forEach((doc) => {
+        biberons.push(doc.data());
+      });
+      return biberons;
+    }
+
+    onMounted(() => {
+      getBiberons().then((biberons) => {
+        lastBiberons.value = biberons.filter((biberon) => {
+          return biberon.userId === userId.value;
+        });
+      });
+    });
+
+    return {
+      quantity,
+      currentDate,
+      currentTime,
+      saveMilkDrink,
+      lastBiberons,
+    };
+  },
+};
 </script>
+
+<style>
+/* Vos styles CSS ici */
+</style>
