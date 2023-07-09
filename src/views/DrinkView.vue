@@ -44,16 +44,31 @@
       </template>
     </v-dialog>
     <h2>Historique</h2>
+    <div class="chart-container">
+      <div
+        class="chart-bar"
+        v-for="item in aggregatedBiberons"
+        :key="item.date"
+        :style="{
+          backgroundColor: getColor(item.quantity),
+          height: getBarHeight(item.quantity),
+        }"
+      >
+        <div class="chart-label">{{ item.date }}</div>
+      </div>
+    </div>
     <v-table v-if="lastBiberons.length > 0">
       <thead>
         <tr>
           <th class="text-center">Date</th>
+          <th class="text-center">Heure</th>
           <th class="text-center">Quantite</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in lastBiberons" :key="item.date">
           <td>{{ item.date }}</td>
+          <td>{{ item.time }}</td>
           <td>{{ item.quantity }}</td>
         </tr>
       </tbody>
@@ -83,6 +98,9 @@ export default {
     const userId = computed(() => store.state.userId);
     const lastBiberons = ref([]);
     const isActive = ref(false);
+    const targetValue = ref(110);
+    const maxHeight = ref(100);
+    const aggregatedBiberons = ref();
 
     onMounted(() => {
       currentDate.value = getCurrentDate();
@@ -109,7 +127,8 @@ export default {
         {
           userId: userId.value,
           quantity: parseInt(quantity.value),
-          date: currentDate.value + " " + currentTime.value,
+          date: currentDate.value,
+          time: currentTime.value,
         },
         { merge: true }
       ).then(() => {
@@ -132,11 +151,54 @@ export default {
       return biberons;
     }
 
+    function getBarHeight(quantity) {
+      const height = (quantity / targetValue.value) * maxHeight.value;
+      return height + "px";
+    }
+
+    function getColor(quantity) {
+      let color = "";
+
+      if (quantity >= 0 && quantity <= 25) {
+        color = "red";
+      } else if (quantity > 25 && quantity <= 50) {
+        color = "orange";
+      } else if (quantity > 50 && quantity <= 90) {
+        color = "yellow";
+      } else {
+        color = "green";
+      }
+
+      return color;
+    }
+
+    function aggregateQuantities(biberons) {
+      const quantitiesMap = new Map();
+
+      for (const biberon of biberons) {
+        const { date, quantity } = biberon;
+
+        if (quantitiesMap.has(date)) {
+          quantitiesMap.set(date, quantitiesMap.get(date) + quantity);
+        } else {
+          quantitiesMap.set(date, quantity);
+        }
+      }
+
+      const aggregatedBiberons = [];
+      quantitiesMap.forEach((quantity, date) => {
+        aggregatedBiberons.push({ date, quantity });
+      });
+
+      return aggregatedBiberons;
+    }
+
     onMounted(() => {
       getBiberons().then((biberons) => {
         lastBiberons.value = biberons.filter((biberon) => {
           return biberon.userId === userId.value;
         });
+        aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
       });
     });
 
@@ -146,11 +208,35 @@ export default {
       currentTime,
       saveMilkDrink,
       lastBiberons,
+      getBarHeight,
+      getColor,
+      aggregatedBiberons: computed(() =>
+        aggregateQuantities(lastBiberons.value)
+      ),
     };
   },
 };
 </script>
 
 <style>
-/* Vos styles CSS ici */
+.chart-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 300px;
+}
+
+.chart-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: 50px;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.chart-label {
+  margin-top: 5px;
+}
 </style>
