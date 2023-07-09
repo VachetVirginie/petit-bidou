@@ -14,9 +14,9 @@ import {
 } from "firebase/firestore";
 
 export default () => {
-  const userEmail = ref(""),
-    password = ref(""),
-    identifiant = ref("");
+  const userEmail = ref("");
+  const password = ref("");
+  const identifiant = ref("");
 
   const action = ref({
     isActive: false,
@@ -81,6 +81,7 @@ export default () => {
         filteredDatas.push(dataWithId);
       }
     });
+    datas.value = filteredDatas;
     areDatasLoaded.value = true;
   };
 
@@ -95,7 +96,7 @@ export default () => {
         action.value = {
           isActive: true,
           title: "Ajouté",
-          text: "Votre element a été ajouté avec succès",
+          text: "Votre élément a été ajouté avec succès",
           color: "text-green-500",
         };
         setTimeout(() => {
@@ -107,7 +108,7 @@ export default () => {
       action.value = {
         isActive: true,
         title: "Erreur",
-        text: "Une erreur est survenue lors de l'ajout de votre element",
+        text: "Une erreur est survenue lors de l'ajout de votre élément",
         color: "text-red-500",
       };
     }
@@ -119,17 +120,17 @@ export default () => {
         action.value = {
           isActive: true,
           title: "Supprimé",
-          text: "Votre element a été supprimé avec succès",
+          text: "Votre élément a été supprimé avec succès",
           color: "text-green-500",
         };
         window.location.reload();
       });
     } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error("Error deleting document: ", e);
       action.value = {
         isActive: true,
         title: "Erreur",
-        text: "Une erreur est survenue lors de la suppression de votre element",
+        text: "Une erreur est survenue lors de la suppression de votre élément",
         color: "text-red-500",
       };
     }
@@ -140,10 +141,10 @@ export default () => {
       doc(
         db,
         "biberons",
-        (userId, Math.random() + 1).toString(36).substring(4)
+        `${userId}-${(Math.random() + 1).toString(36).substring(4)}`
       ),
       {
-        userId: userId.value,
+        userId: userId,
         quantity: parseInt(quantity),
         date: currentDate + " " + currentTime,
       },

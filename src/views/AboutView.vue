@@ -47,7 +47,7 @@ function saveMilkDrink() {
   );
 }
 
-async function getBiberons() {
+async function getDrinkedMilk() {
   const biberonsCol = collection(db, "biberons");
   const biberonsSnapshot = await getDocs(biberonsCol);
   const biberonsList = biberonsSnapshot.docs.map((doc) => doc.data());
@@ -55,7 +55,7 @@ async function getBiberons() {
 }
 
 onMounted(() => {
-  getBiberons().then((biberons) => {
+  getDrinkedMilk().then((biberons) => {
     lastBiberons.value = biberons.filter((biberon) => {
       return (
         biberon.userId === userId.value && biberon.date === currentDate.value
