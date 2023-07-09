@@ -22,7 +22,9 @@
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import { db } from "@/utils/useFirebase";
-import { setDoc, doc, getDocs, collection } from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
+import { addDrinkedMilk } from "@/utils/useFirestore";
+import { getCurrentDate, getCurrentTime } from "@/utils/useCommons";
 
 export default {
   setup() {
@@ -38,29 +40,12 @@ export default {
       currentTime.value = getCurrentTime();
     });
 
-    function getCurrentDate() {
-      const now = new Date();
-      return now.toISOString().split("T")[0];
-    }
-
-    function getCurrentTime() {
-      const now = new Date();
-      return now.toLocaleTimeString();
-    }
-
     function saveMilkDrink() {
-      setDoc(
-        doc(
-          db,
-          "biberons",
-          (userId.value, Math.random() + 1).toString(36).substring(4)
-        ),
-        {
-          userId: userId.value,
-          quantity: parseInt(quantity.value),
-          date: currentDate.value + " " + currentTime.value,
-        },
-        { merge: true }
+      addDrinkedMilk(
+        userId.value,
+        quantity.value,
+        currentDate.value,
+        currentTime.value
       );
     }
 

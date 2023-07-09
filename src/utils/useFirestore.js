@@ -135,12 +135,29 @@ export default () => {
     }
   };
 
+  const addDrinkedMilk = (userId, quantity, currentDate, currentTime) => {
+    setDoc(
+      doc(
+        db,
+        "biberons",
+        (userId, Math.random() + 1).toString(36).substring(4)
+      ),
+      {
+        userId: userId.value,
+        quantity: parseInt(quantity),
+        date: currentDate + " " + currentTime,
+      },
+      { merge: true }
+    );
+  };
+
   return {
     createDoc,
     createUser,
     deleteSelectedDoc,
     getDatas,
     loginUser,
+    addDrinkedMilk,
 
     action,
     areDatasLoaded,
