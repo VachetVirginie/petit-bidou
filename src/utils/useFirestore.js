@@ -2,7 +2,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth, db } from "@/utils/firebase";
+import { auth, db } from "@/utils/useFirebase";
 import { useStore } from "vuex";
 import { ref } from "vue";
 import {

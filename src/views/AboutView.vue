@@ -21,7 +21,7 @@
 <script>
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
-import { db } from "@/utils/firebase";
+import { db } from "@/utils/useFirebase";
 import { setDoc, doc, getDocs, collection } from "firebase/firestore";
 
 export default {
