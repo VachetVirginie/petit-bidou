@@ -32,11 +32,18 @@ export async function getBiberons(userId) {
   return biberons.filter((biberon) => biberon.userId === userId);
 }
 
-export async function updateBiberon(biberonId, quantity) {
+export async function updateBiberon(
+  biberonId,
+  quantity,
+  currentDate,
+  currentTime
+) {
   return setDoc(
     doc(db, "biberons", biberonId),
     {
-      quantity: parseInt(quantity),
+      quantity: quantity,
+      date: currentDate,
+      time: currentTime,
     },
     { merge: true }
   );

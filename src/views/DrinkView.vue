@@ -96,7 +96,7 @@
             <v-btn
               density="compact"
               icon="mdi-pencil-outline"
-              @click="openDialog()"
+              @click="onEdit(item)"
             ></v-btn>
           </td>
         </tr>
@@ -119,6 +119,7 @@ import {
   postBiberon as postBiberonApi,
   getBiberons,
   deleteBiberon,
+  updateBiberon,
 } from "@/utils/useApi";
 
 import {
@@ -138,19 +139,43 @@ const userId = computed(() => store.state.userId);
 const lastBiberons = ref([]);
 const aggregatedBiberons = ref();
 const dialogVisible = ref(false);
+const editedItem = ref(null);
 
 const postBiberon = () => {
-  postBiberonApi(
-    userId.value,
-    quantity.value,
-    currentDate.value,
-    currentTime.value
-  ).then(() => {
-    getBiberons(userId.value).then((biberons) => {
-      lastBiberons.value = biberons;
-      aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+  if (editedItem.value) {
+    updateBiberon(
+      userId.value,
+      editedItem.value.id,
+      quantity.value,
+      currentDate.value,
+      currentTime.value
+    ).then(() => {
+      updateBiberon(
+        editedItem.value.id,
+        quantity.value,
+        currentDate.value,
+        currentTime.value
+      ).then(() => {
+        getBiberons(userId.value).then((biberons) => {
+          lastBiberons.value = biberons;
+          aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+        });
+        editedItem.value = null;
+      });
     });
-  });
+  } else {
+    postBiberonApi(
+      userId.value,
+      quantity.value,
+      currentDate.value,
+      currentTime.value
+    ).then(() => {
+      getBiberons(userId.value).then((biberons) => {
+        lastBiberons.value = biberons;
+        aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+      });
+    });
+  }
 };
 
 const onDeleteBiberon = (id) => {
@@ -177,6 +202,16 @@ const openDialog = (props) => {
 const updateCurrentDateTime = () => {
   currentDate.value = getCurrentDate();
   currentTime.value = getCurrentTime();
+};
+
+const onEdit = (item) => {
+  openDialog();
+  editedItem.value = { ...item }; // Copie des valeurs de l'élément édité
+
+  // Mise à jour des valeurs du formulaire avec les valeurs de l'élément édité
+  currentDate.value = editedItem.value.date;
+  currentTime.value = editedItem.value.time;
+  quantity.value = editedItem.value.quantity;
 };
 
 onMounted(() => {
