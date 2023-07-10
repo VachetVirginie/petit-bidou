@@ -1,7 +1,7 @@
 import { db } from "@/utils/useFirebase";
 import { setDoc, doc, getDocs, collection } from "firebase/firestore";
 
-export function postMilkDrink(userId, quantity, currentDate, currentTime) {
+export function postBiberon(userId, quantity, currentDate, currentTime) {
   return setDoc(
     doc(db, "biberons", (userId, Math.random() + 1).toString(36).substring(4)),
     {

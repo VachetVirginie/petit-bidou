@@ -18,7 +18,7 @@
       ></v-text-field>
 
       <div class="d-flex flex-column">
-        <v-btn color="success" class="mt-4" block @click="postMilkDrink">
+        <v-btn color="success" class="mt-4" block @click="postBiberon">
           Enregistrer
         </v-btn>
       </div>
@@ -45,7 +45,7 @@ onMounted(() => {
   currentTime.value = getCurrentTime();
 });
 
-async function postMilkDrink() {
+async function postBiberon() {
   setDoc(
     doc(
       db,

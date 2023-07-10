@@ -13,7 +13,7 @@
           <v-card-text>
             <div class="text-h2 px-12 py-8">
               <v-sheet width="300" class="mx-auto">
-                <v-form fast-fail @submit.prevent="postMilkDrink()">
+                <v-form fast-fail @submit.prevent="postBiberon()">
                   <v-text-field
                     v-model="currentDate"
                     label="Date"
@@ -98,7 +98,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
-import { postMilkDrink as postMilkDrinkApi, getBiberons } from "@/utils/useApi";
+import { postBiberon as postBiberonApi, getBiberons } from "@/utils/useApi";
 
 import {
   aggregateQuantities,
@@ -117,8 +117,8 @@ const userId = computed(() => store.state.userId);
 const lastBiberons = ref([]);
 const aggregatedBiberons = ref();
 
-const postMilkDrink = () => {
-  postMilkDrinkApi(
+const postBiberon = () => {
+  postBiberonApi(
     userId.value,
     quantity.value,
     currentDate.value,
