@@ -54,8 +54,8 @@
           height: getBarHeight(item.quantity),
         }"
       >
-        <div class="bar-total">{{ item.quantity }}</div>
-        <div class="bar-date">{{ formatDate(item.date, "dd MMM") }}</div>
+        <div class="bar-total">{{ item.quantity }} ml</div>
+        <div class="bar-date">{{ formatDate(item.date, "dd/MM") }}</div>
       </div>
     </div>
     <v-table v-if="lastBiberons.length > 0">
@@ -101,7 +101,7 @@ export default {
     const userId = computed(() => store.state.userId);
     const lastBiberons = ref([]);
     const isActive = ref(false);
-    const targetValue = ref(110);
+    const targetValue = ref(660);
     const maxHeight = ref(100);
     const aggregatedBiberons = ref();
     const frenchLocale = fr;
@@ -163,11 +163,11 @@ export default {
     function getColor(quantity) {
       let color = "";
 
-      if (quantity >= 0 && quantity <= 25) {
+      if (quantity >= 0 && quantity <= 250) {
         color = "red";
-      } else if (quantity > 25 && quantity <= 50) {
+      } else if (quantity > 250 && quantity <= 500) {
         color = "orange";
-      } else if (quantity > 50 && quantity <= 90) {
+      } else if (quantity > 500 && quantity <= 600) {
         color = "yellow";
       } else {
         color = "green";
