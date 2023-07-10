@@ -1,5 +1,11 @@
 import { db } from "@/utils/useFirebase";
-import { setDoc, doc, getDocs, collection } from "firebase/firestore";
+import {
+  setDoc,
+  deleteDoc,
+  doc,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 
 export function postBiberon(userId, quantity, currentDate, currentTime) {
   return setDoc(
@@ -18,7 +24,24 @@ export async function getBiberons(userId) {
   const biberons = [];
   const querySnapshot = await getDocs(collection(db, "biberons"));
   querySnapshot.forEach((doc) => {
-    biberons.push(doc.data());
+    const biberonData = doc.data();
+    const biberonId = doc.id;
+
+    biberons.push({ ...biberonData, id: biberonId });
   });
   return biberons.filter((biberon) => biberon.userId === userId);
+}
+
+export async function updateBiberon(biberonId, quantity) {
+  return setDoc(
+    doc(db, "biberons", biberonId),
+    {
+      quantity: parseInt(quantity),
+    },
+    { merge: true }
+  );
+}
+
+export async function deleteBiberon(biberonId) {
+  return deleteDoc(doc(db, "biberons", biberonId), { merge: true });
 }

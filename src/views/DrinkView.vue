@@ -75,6 +75,7 @@
           <th class="text-center">Date</th>
           <th class="text-center">Heure</th>
           <th class="text-center">Quantité</th>
+          <th class="text-center">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -82,6 +83,13 @@
           <td>{{ item.date }}</td>
           <td>{{ item.time }}</td>
           <td>{{ item.quantity }} ml</td>
+          <td>
+            <v-btn
+              density="compact"
+              icon="mdi-delete"
+              @click="onDeleteBiberon(item.id)"
+            ></v-btn>
+          </td>
         </tr>
       </tbody>
     </v-table>
@@ -98,7 +106,11 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
-import { postBiberon as postBiberonApi, getBiberons } from "@/utils/useApi";
+import {
+  postBiberon as postBiberonApi,
+  getBiberons,
+  deleteBiberon,
+} from "@/utils/useApi";
 
 import {
   aggregateQuantities,
@@ -124,6 +136,15 @@ const postBiberon = () => {
     currentDate.value,
     currentTime.value
   ).then(() => {
+    getBiberons(userId.value).then((biberons) => {
+      lastBiberons.value = biberons;
+      aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+    });
+  });
+};
+
+const onDeleteBiberon = (id) => {
+  deleteBiberon(id).then(() => {
     getBiberons(userId.value).then((biberons) => {
       lastBiberons.value = biberons;
       aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
