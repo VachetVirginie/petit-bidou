@@ -80,7 +80,7 @@
       </thead>
       <tbody>
         <tr v-for="item in lastBiberons" :key="item.date">
-          <td>{{ item.date }}</td>
+          <td>{{ formatDate(item.date, "dd/MM") }}</td>
           <td>{{ item.time }}</td>
           <td>{{ item.quantity }} ml</td>
           <td>
