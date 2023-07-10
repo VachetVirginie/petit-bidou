@@ -1,20 +1,28 @@
 <template>
   <div>
-    <h1>Biberons</h1>
+    <h1 class="text-4xl font-bold mb-6">Biberons</h1>
     <v-dialog transition="dialog-bottom-transition" width="auto">
       <template v-slot:activator="{ props }">
-        <v-btn color="success" v-bind="props">Ajouter biberon</v-btn>
+        <v-btn color="success" v-bind="props" class="mb-4"
+          >Ajouter biberon</v-btn
+        >
       </template>
       <template v-slot:default="{ isActive }">
         <v-card>
-          <v-toolbar color="success" title="Enregister un biberon"></v-toolbar>
+          <v-toolbar color="success" title="Enregistrer un biberon"></v-toolbar>
           <v-card-text>
-            <div class="text-h2 pa-12">
+            <div class="text-h2 px-12 py-8">
               <v-sheet width="300" class="mx-auto">
                 <v-form fast-fail @submit.prevent="saveMilkDrink()">
-                  <v-text-field v-model="currentDate"></v-text-field>
+                  <v-text-field
+                    v-model="currentDate"
+                    label="Date"
+                  ></v-text-field>
 
-                  <v-text-field v-model="currentTime"></v-text-field>
+                  <v-text-field
+                    v-model="currentTime"
+                    label="Heure"
+                  ></v-text-field>
 
                   <v-text-field
                     v-model="quantity"
@@ -29,24 +37,25 @@
                     color="success"
                     @click="isActive.value = false"
                     class="mt-2"
-                    >Enregistrer</v-btn
                   >
+                    Enregistrer
+                  </v-btn>
                 </v-form>
               </v-sheet>
             </div>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn variant="text" color="error" @click="isActive.value = false"
-              >Fermer</v-btn
-            >
+            <v-btn variant="text" color="error" @click="isActive.value = false">
+              Fermer
+            </v-btn>
           </v-card-actions>
         </v-card>
       </template>
     </v-dialog>
-    <h2>Historique</h2>
-    <div class="chart-container">
+    <h2 class="text-2xl font-bold mt-8 mb-4">Historique</h2>
+    <div class="flex justify-center items-center flex-wrap gap-8">
       <div
-        class="chart-bar"
+        class="chart-bar flex flex-col items-center justify-end text-white"
         v-for="item in aggregatedBiberons"
         :key="item.date"
         :style="{
@@ -54,16 +63,18 @@
           height: getBarHeight(item.quantity),
         }"
       >
-        <div class="bar-total">{{ item.quantity }} ml</div>
-        <div class="bar-date">{{ formatDate(item.date, "dd/MM") }}</div>
+        <div class="bar-total text-xl font-bold mb-1">
+          {{ item.quantity }} ml
+        </div>
+        <div class="bar-date text-sm">{{ formatDate(item.date, "dd/MM") }}</div>
       </div>
     </div>
-    <v-table v-if="lastBiberons.length > 0">
+    <v-table v-if="lastBiberons.length > 0" class="my-8">
       <thead>
         <tr>
           <th class="text-center">Date</th>
           <th class="text-center">Heure</th>
-          <th class="text-center">Quantite</th>
+          <th class="text-center">Quantité</th>
         </tr>
       </thead>
       <tbody>
@@ -77,7 +88,7 @@
     <v-alert
       v-else
       type="error"
-      text="Pas d'elements enregistres"
+      text="Pas d'éléments enregistrés"
       width="300"
       class="mx-auto py-6 my-6"
     ></v-alert>
