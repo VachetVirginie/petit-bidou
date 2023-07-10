@@ -54,8 +54,8 @@
           height: getBarHeight(item.quantity),
         }"
       >
-        <div class="bar-total">{{ item.quantity }}</div>
-        <div class="bar-date">{{ formatDate(item.date, "dd MMM") }}</div>
+        <div class="bar-total">{{ item.quantity }} ml</div>
+        <div class="bar-date">{{ formatDate(item.date, "dd/MM") }}</div>
       </div>
     </div>
     <v-table v-if="lastBiberons.length > 0">
@@ -70,7 +70,7 @@
         <tr v-for="item in lastBiberons" :key="item.date">
           <td>{{ item.date }}</td>
           <td>{{ item.time }}</td>
-          <td>{{ item.quantity }}</td>
+          <td>{{ item.quantity }} ml</td>
         </tr>
       </tbody>
     </v-table>
@@ -101,7 +101,7 @@ export default {
     const userId = computed(() => store.state.userId);
     const lastBiberons = ref([]);
     const isActive = ref(false);
-    const targetValue = ref(110);
+    const targetValue = ref(660);
     const maxHeight = ref(100);
     const aggregatedBiberons = ref();
     const frenchLocale = fr;
@@ -156,21 +156,21 @@ export default {
     }
 
     function getBarHeight(quantity) {
-      const height = (quantity / targetValue.value) * maxHeight.value;
+      const height = (quantity / targetValue.value) * (maxHeight.value * 2);
       return height + "px";
     }
 
     function getColor(quantity) {
       let color = "";
 
-      if (quantity >= 0 && quantity <= 25) {
+      if (quantity >= 0 && quantity <= 250) {
         color = "red";
-      } else if (quantity > 25 && quantity <= 50) {
+      } else if (quantity > 250 && quantity <= 500) {
         color = "orange";
-      } else if (quantity > 50 && quantity <= 90) {
+      } else if (quantity > 500 && quantity <= 610) {
         color = "yellow";
       } else {
-        color = "green";
+        color = "#53B257";
       }
 
       return color;
@@ -234,6 +234,7 @@ export default {
   justify-content: space-between;
   align-items: flex-end;
   height: 300px;
+  padding: 12px;
 }
 
 .chart-bar {
@@ -244,6 +245,7 @@ export default {
   width: 50px;
   margin-right: 10px;
   border-radius: 5px;
+  padding: 2px;
 }
 
 .bar-total {
