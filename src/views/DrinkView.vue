@@ -1,9 +1,13 @@
 <template>
   <div>
     <h1 class="text-4xl font-bold mb-6">Biberons</h1>
-    <v-dialog transition="dialog-bottom-transition" width="auto">
+    <v-dialog
+      transition="dialog-bottom-transition"
+      width="auto"
+      v-model="dialogVisible"
+    >
       <template v-slot:activator="{ props }">
-        <v-btn color="success" v-bind="props" class="mb-4"
+        <v-btn color="success" @click="openDialog(props)" class="mb-4"
           >Ajouter biberon</v-btn
         >
       </template>
@@ -89,6 +93,11 @@
               icon="mdi-delete"
               @click="onDeleteBiberon(item.id)"
             ></v-btn>
+            <v-btn
+              density="compact"
+              icon="mdi-pencil-outline"
+              @click="openDialog()"
+            ></v-btn>
           </td>
         </tr>
       </tbody>
@@ -128,6 +137,7 @@ const store = useStore();
 const userId = computed(() => store.state.userId);
 const lastBiberons = ref([]);
 const aggregatedBiberons = ref();
+const dialogVisible = ref(false);
 
 const postBiberon = () => {
   postBiberonApi(
@@ -150,6 +160,23 @@ const onDeleteBiberon = (id) => {
       aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
     });
   });
+};
+
+// Méthode pour ouvrir le v-dialog
+const openDialog = (props) => {
+  console.log(props);
+  dialogVisible.value = true;
+  updateCurrentDateTime();
+};
+
+// Méthode pour fermer le v-dialog
+// const closeDialog = () => {
+//   dialogVisible.value = false;
+// };
+
+const updateCurrentDateTime = () => {
+  currentDate.value = getCurrentDate();
+  currentTime.value = getCurrentTime();
 };
 
 onMounted(() => {
