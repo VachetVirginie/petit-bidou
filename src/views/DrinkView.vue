@@ -13,7 +13,7 @@
           <v-card-text>
             <div class="text-h2 px-12 py-8">
               <v-sheet width="300" class="mx-auto">
-                <v-form fast-fail @submit.prevent="saveMilkDrink()">
+                <v-form fast-fail @submit.prevent="postMilkDrink()">
                   <v-text-field
                     v-model="currentDate"
                     label="Date"
@@ -98,14 +98,14 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
+import { postMilkDrink as postMilkDrinkApi, getBiberons } from "@/utils/useApi";
+
 import {
-  saveMilkDrink as saveMilkDrinkApi,
-  getBiberons,
   aggregateQuantities,
   formatDate,
-  getColor,
   getBarHeight,
-} from "@/utils/api";
+  getColor,
+} from "@/utils/useCommons";
 
 const quantity = ref(0);
 const currentDate = ref("");
@@ -141,8 +141,8 @@ onMounted(() => {
   });
 });
 
-const saveMilkDrink = () => {
-  saveMilkDrinkApi(
+const postMilkDrink = () => {
+  postMilkDrinkApi(
     userId.value,
     quantity.value,
     currentDate.value,
