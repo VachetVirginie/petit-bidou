@@ -84,80 +84,64 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import {
-  saveMilkDrink,
+  saveMilkDrink as saveMilkDrinkApi,
   getBiberons,
   aggregateQuantities,
   formatDate,
   getColor,
   getBarHeight,
 } from "@/utils/api";
-import { fr } from "date-fns/esm/locale";
 
-export default {
-  setup() {
-    const quantity = ref(0);
-    const currentDate = ref("");
-    const currentTime = ref("");
-    const store = useStore();
-    const userId = computed(() => store.state.userId);
-    const lastBiberons = ref([]);
-    const aggregatedBiberons = ref();
-    const frenchLocale = fr;
+const quantity = ref(0);
+const currentDate = ref("");
+const currentTime = ref("");
+const store = useStore();
+const userId = computed(() => store.state.userId);
+const lastBiberons = ref([]);
+const aggregatedBiberons = ref();
 
-    onMounted(() => {
-      currentDate.value = getCurrentDate();
-      currentTime.value = getCurrentTime();
+onMounted(() => {
+  currentDate.value = getCurrentDate();
+  currentTime.value = getCurrentTime();
+});
+
+function getCurrentDate() {
+  const now = new Date();
+  return now.toISOString().split("T")[0];
+}
+
+function getCurrentTime() {
+  const now = new Date();
+  return now.toLocaleTimeString();
+}
+
+onMounted(() => {
+  getBiberons(userId.value).then((biberons) => {
+    lastBiberons.value = biberons.sort((a, b) => {
+      const dateA = new Date(a.date + " " + a.time);
+      const dateB = new Date(b.date + " " + b.time);
+      return dateB - dateA;
     });
+    aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+  });
+});
 
-    function getCurrentDate() {
-      const now = new Date();
-      return now.toISOString().split("T")[0];
-    }
-
-    function getCurrentTime() {
-      const now = new Date();
-      return now.toLocaleTimeString();
-    }
-
-    onMounted(() => {
-      getBiberons(userId.value).then((biberons) => {
-        lastBiberons.value = biberons;
-        aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
-      });
+const saveMilkDrink = () => {
+  saveMilkDrinkApi(
+    userId.value,
+    quantity.value,
+    currentDate.value,
+    currentTime.value
+  ).then(() => {
+    getBiberons(userId.value).then((biberons) => {
+      lastBiberons.value = biberons;
+      aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
     });
-
-    return {
-      quantity,
-      currentDate,
-      currentTime,
-      userId,
-      saveMilkDrink: () => {
-        saveMilkDrink(
-          userId.value,
-          quantity.value,
-          currentDate.value,
-          currentTime.value
-        ).then(() => {
-          getBiberons(userId.value).then((biberons) => {
-            lastBiberons.value = biberons;
-            aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
-          });
-        });
-      },
-      lastBiberons,
-      aggregatedBiberons: computed(() =>
-        aggregateQuantities(lastBiberons.value)
-      ),
-      formatDate,
-      frenchLocale,
-      getColor,
-      getBarHeight,
-    };
-  },
+  });
 };
 </script>
 
