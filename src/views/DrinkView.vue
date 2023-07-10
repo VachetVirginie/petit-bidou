@@ -104,6 +104,8 @@ import {
   aggregateQuantities,
   formatDate,
   getBarHeight,
+  getCurrentTime,
+  getCurrentDate,
   getColor,
 } from "@/utils/useCommons";
 
@@ -114,32 +116,6 @@ const store = useStore();
 const userId = computed(() => store.state.userId);
 const lastBiberons = ref([]);
 const aggregatedBiberons = ref();
-
-onMounted(() => {
-  currentDate.value = getCurrentDate();
-  currentTime.value = getCurrentTime();
-});
-
-function getCurrentDate() {
-  const now = new Date();
-  return now.toISOString().split("T")[0];
-}
-
-function getCurrentTime() {
-  const now = new Date();
-  return now.toLocaleTimeString();
-}
-
-onMounted(() => {
-  getBiberons(userId.value).then((biberons) => {
-    lastBiberons.value = biberons.sort((a, b) => {
-      const dateA = new Date(a.date + " " + a.time);
-      const dateB = new Date(b.date + " " + b.time);
-      return dateB - dateA;
-    });
-    aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
-  });
-});
 
 const postMilkDrink = () => {
   postMilkDrinkApi(
@@ -154,32 +130,32 @@ const postMilkDrink = () => {
     });
   });
 };
+
+onMounted(() => {
+  currentDate.value = getCurrentDate();
+  currentTime.value = getCurrentTime();
+
+  getBiberons(userId.value).then((biberons) => {
+    lastBiberons.value = biberons.sort((a, b) => {
+      const dateA = new Date(a.date + " " + a.time);
+      const dateB = new Date(b.date + " " + b.time);
+      return dateB - dateA;
+    });
+    aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+  });
+});
 </script>
 
 <style>
-.chart-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  height: 300px;
-}
-
 .chart-bar {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  width: 50px;
-  margin-right: 10px;
-  border-radius: 5px;
+  @apply flex flex-col justify-end items-center w-12 mr-2 rounded;
 }
 
 .bar-total {
-  margin-top: auto;
+  @apply mt-auto;
 }
 
 .bar-date {
-  margin-top: 5px;
-  text-align: center;
+  @apply mt-1 text-center;
 }
 </style>
