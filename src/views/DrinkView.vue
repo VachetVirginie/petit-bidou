@@ -91,6 +91,7 @@
             <v-btn
               density="compact"
               icon="mdi-delete"
+              class="ma-4"
               @click="onDeleteBiberon(item.id)"
             ></v-btn>
             <v-btn
