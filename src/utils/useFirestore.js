@@ -2,21 +2,13 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth, db } from "@/utils/useFirebase";
+import { auth } from "@/utils/useFirebase";
 import { useStore } from "vuex";
 import { ref } from "vue";
-import {
-  collection,
-  doc,
-  deleteDoc,
-  getDocs,
-  setDoc,
-} from "firebase/firestore";
 
 export default () => {
   const userEmail = ref("");
   const password = ref("");
-  const identifiant = ref("");
 
   const action = ref({
     isActive: false,
@@ -25,9 +17,6 @@ export default () => {
     color: "",
   });
 
-  const datas = ref([]);
-  const areDatasLoaded = ref(false);
-  const docId = ref("");
   const store = useStore();
 
   const createUser = () => {
@@ -70,101 +59,9 @@ export default () => {
       });
   };
 
-  const getDatas = async () => {
-    const querySnapshot = await getDocs(collection(db, "users"));
-    const filteredDatas = [];
-
-    querySnapshot.forEach((doc) => {
-      if (doc.data().user === auth.currentUser.email) {
-        const dataWithId = doc.data();
-        dataWithId.id = doc.id;
-        filteredDatas.push(dataWithId);
-      }
-    });
-    datas.value = filteredDatas;
-    areDatasLoaded.value = true;
-  };
-
-  const createDoc = (creatingName, creatingIdentifiant, creatingPassword) => {
-    try {
-      setDoc(doc(db, "users", (Math.random() + 1).toString(36).substring(4)), {
-        siteTitle: creatingName,
-        auth: creatingIdentifiant,
-        psw: creatingPassword,
-        user: auth.currentUser.email,
-      }).then(() => {
-        action.value = {
-          isActive: true,
-          title: "Ajouté",
-          text: "Votre élément a été ajouté avec succès",
-          color: "text-green-500",
-        };
-        setTimeout(() => {
-          window.location.href = "/home";
-        }, 1000);
-      });
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      action.value = {
-        isActive: true,
-        title: "Erreur",
-        text: "Une erreur est survenue lors de l'ajout de votre élément",
-        color: "text-red-500",
-      };
-    }
-  };
-
-  const deleteSelectedDoc = (id) => {
-    try {
-      deleteDoc(doc(db, "users", id)).then(() => {
-        action.value = {
-          isActive: true,
-          title: "Supprimé",
-          text: "Votre élément a été supprimé avec succès",
-          color: "text-green-500",
-        };
-        window.location.reload();
-      });
-    } catch (e) {
-      console.error("Error deleting document: ", e);
-      action.value = {
-        isActive: true,
-        title: "Erreur",
-        text: "Une erreur est survenue lors de la suppression de votre élément",
-        color: "text-red-500",
-      };
-    }
-  };
-
-  const addDrinkedMilk = (userId, quantity, currentDate, currentTime) => {
-    setDoc(
-      doc(
-        db,
-        "biberons",
-        `${userId}-${(Math.random() + 1).toString(36).substring(4)}`
-      ),
-      {
-        userId: userId,
-        quantity: parseInt(quantity),
-        date: currentDate + " " + currentTime,
-      },
-      { merge: true }
-    );
-  };
-
   return {
-    createDoc,
     createUser,
-    deleteSelectedDoc,
-    getDatas,
     loginUser,
-    addDrinkedMilk,
-
-    action,
-    areDatasLoaded,
-    datas,
-    docId,
-    identifiant,
     password,
     userEmail,
   };
