@@ -16,7 +16,7 @@
           <v-toolbar color="success" title="Enregistrer un biberon"></v-toolbar>
           <v-card-text>
             <div class="text-h2 px-12 py-8">
-              <v-sheet width="300" class="mx-auto">
+              <v-sheet class="mx-auto">
                 <v-form fast-fail @submit.prevent="postBiberon()">
                   <v-text-field
                     type="date"
