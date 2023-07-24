@@ -19,11 +19,13 @@
               <v-sheet width="300" class="mx-auto">
                 <v-form fast-fail @submit.prevent="postBiberon()">
                   <v-text-field
+                    type="date"
                     v-model="currentDate"
                     label="Date"
                   ></v-text-field>
 
                   <v-text-field
+                    type="time"
                     v-model="currentTime"
                     label="Heure"
                   ></v-text-field>

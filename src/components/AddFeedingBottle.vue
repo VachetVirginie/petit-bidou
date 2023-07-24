@@ -39,10 +39,12 @@ const currentTime = ref("");
 const store = useStore();
 const userId = computed(() => store.state.userId);
 const lastBiberons = ref([]);
+const now = ref("");
 
 onMounted(() => {
   currentDate.value = getCurrentDate();
   currentTime.value = getCurrentTime();
+  now.value = currentDate.value;
 });
 
 async function postBiberon() {
