@@ -149,13 +149,13 @@ const postBiberon = () => {
     updateBiberon(
       userId.value,
       editedItem.value.id,
-      quantity.value,
+      parseInt(quantity.value),
       currentDate.value,
       currentTime.value
     ).then(() => {
       updateBiberon(
         editedItem.value.id,
-        quantity.value,
+        parseInt(quantity.value),
         currentDate.value,
         currentTime.value
       ).then(() => {
