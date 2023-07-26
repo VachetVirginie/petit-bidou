@@ -31,7 +31,7 @@ import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import { db } from "@/composables/useFirebase";
 import { getDocs, collection, setDoc, doc } from "firebase/firestore";
-import { getCurrentDate, getCurrentTime } from "@/composables/useCommons";
+import { getCurrentDate, getCurrentTime } from "@/utils/dateTimeUtils";
 
 const quantity = ref(0);
 const currentDate = ref("");

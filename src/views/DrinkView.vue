@@ -127,12 +127,15 @@ import {
 
 import {
   aggregateQuantities,
-  formatDate,
   getBarHeight,
-  getCurrentTime,
-  getCurrentDate,
   getColor,
 } from "@/composables/useCommons";
+
+import {
+  formatDate,
+  getCurrentTime,
+  getCurrentDate,
+} from "@/utils/dateTimeUtils";
 
 const quantity = ref(0);
 const currentDate = ref("");
