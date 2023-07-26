@@ -1,5 +1,23 @@
 <template>
   <div>
+    <div class="d-flex justify-end m-3">
+      <v-btn @click="onSignOut">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+          />
+        </svg>
+      </v-btn>
+    </div>
     <h1 class="text-4xl font-bold mb-6">Biberons</h1>
     <v-dialog
       transition="dialog-bottom-transition"
@@ -137,6 +155,8 @@ import {
   getCurrentDate,
 } from "@/utils/dateTimeUtils";
 
+import useFirestore from "@/composables/useFirestore";
+
 const quantity = ref(0);
 const currentDate = ref("");
 const currentTime = ref("");
@@ -146,6 +166,12 @@ const lastBiberons = ref([]);
 const aggregatedBiberons = ref();
 const dialogVisible = ref(false);
 const editedItem = ref(null);
+const { signOut } = useFirestore();
+
+const onSignOut = () => {
+  signOut();
+  store.commit("setUserId", null);
+};
 
 const postBiberon = () => {
   if (editedItem.value) {

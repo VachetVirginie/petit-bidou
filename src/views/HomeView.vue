@@ -23,6 +23,16 @@
         </v-btn>
       </div>
     </v-sheet>
+    <v-dialog v-model="isError" activator="parent" width="auto">
+      <v-card>
+        <v-card-text>
+          {{ errorMessage }}
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="success" block @click="isError = false">Fermer</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -30,7 +40,8 @@
 import useFirestore from "@/composables/useFirestore";
 import { useStore } from "vuex";
 
-const { createUser, loginUser, password, userEmail } = useFirestore();
+const { createUser, loginUser, password, userEmail, errorMessage, isError } =
+  useFirestore();
 const store = useStore();
 
 const onCreateUser = () => {
