@@ -23,7 +23,7 @@
         </v-btn>
       </div>
     </v-sheet>
-    <v-dialog v-model="isError" activator="parent" width="auto">
+    <v-dialog v-model="isError" width="auto">
       <v-card>
         <v-card-text>
           {{ errorMessage }}
