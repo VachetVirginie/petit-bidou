@@ -1,4 +1,4 @@
-import { db } from "@/utils/useFirebase";
+import { db } from "@/composables/useFirebase";
 import {
   setDoc,
   deleteDoc,

@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import useFirestore from "@/utils/useFirestore";
+import useFirestore from "@/composables/useFirestore";
 import { useStore } from "vuex";
 
 const { createUser, loginUser, password, userEmail } = useFirestore();

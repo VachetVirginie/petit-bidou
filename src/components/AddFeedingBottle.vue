@@ -29,9 +29,9 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
-import { db } from "@/utils/useFirebase";
+import { db } from "@/composables/useFirebase";
 import { getDocs, collection, setDoc, doc } from "firebase/firestore";
-import { getCurrentDate, getCurrentTime } from "@/utils/useCommons";
+import { getCurrentDate, getCurrentTime } from "@/composables/useCommons";
 
 const quantity = ref(0);
 const currentDate = ref("");

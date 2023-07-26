@@ -123,7 +123,7 @@ import {
   getBiberons,
   deleteBiberon,
   updateBiberon,
-} from "@/utils/useApi";
+} from "@/composables/useApi";
 
 import {
   aggregateQuantities,
@@ -132,7 +132,7 @@ import {
   getCurrentTime,
   getCurrentDate,
   getColor,
-} from "@/utils/useCommons";
+} from "@/composables/useCommons";
 
 const quantity = ref(0);
 const currentDate = ref("");
