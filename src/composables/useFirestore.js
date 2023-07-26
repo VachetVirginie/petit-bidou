@@ -9,6 +9,8 @@ import { ref } from "vue";
 export default () => {
   const userEmail = ref("");
   const password = ref("");
+  const isError = ref(false);
+  const errorMessage = ref("");
 
   const action = ref({
     isActive: false,
@@ -49,20 +51,26 @@ export default () => {
           .then((r) => console.log(r));
         window.location.href = "/about";
       })
-      .catch(() => {
-        action.value = {
-          isActive: true,
-          title: "Erreur",
-          text: "Mail ou mot de passe incorrect",
-          color: "text-red-500",
-        };
+      .catch((error) => {
+        errorMessage.value = error.message;
+        isError.value = true;
       });
+  };
+
+  const signOut = () => {
+    auth.signOut().then(() => {
+      store.dispatch("updateUserId", null).then((r) => console.log(r));
+      window.location.href = "/";
+    });
   };
 
   return {
     createUser,
     loginUser,
     password,
+    signOut,
     userEmail,
+    isError,
+    errorMessage,
   };
 };
