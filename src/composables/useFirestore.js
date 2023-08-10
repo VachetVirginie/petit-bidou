@@ -49,7 +49,7 @@ export default () => {
         store
           .dispatch("updateUserId", userCredential.user.uid)
           .then((r) => console.log(r));
-        window.location.href = "/about";
+        window.location.href = "/biberons";
       })
       .catch((error) => {
         errorMessage.value = error.message;
