@@ -56,9 +56,9 @@
                   ></v-text-field>
 
                   <div class="inline">
-                    <v-checkbox v-model="morningPill" label="Fer"></v-checkbox>
+                    <v-checkbox v-model="morningPill" label="Fer1"></v-checkbox>
                     <v-checkbox v-model="middayPill" label="Vit"></v-checkbox>
-                    <v-checkbox v-model="eveningPill" label="Fer"></v-checkbox>
+                    <v-checkbox v-model="eveningPill" label="Fer2"></v-checkbox>
                   </div>
 
                   <v-btn
