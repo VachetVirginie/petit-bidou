@@ -55,6 +55,16 @@
                     required
                   ></v-text-field>
 
+                  <v-checkbox
+                    v-model="morningPill"
+                    label="Fer du matin"
+                  ></v-checkbox>
+                  <v-checkbox v-model="middayPill" label="Vitamine">
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="eveningPill"
+                    label="Fer du matin"
+                  ></v-checkbox>
                   <v-btn
                     type="submit"
                     block
@@ -157,9 +167,14 @@ import {
 
 import useFirestore from "@/composables/useFirestore";
 
+import { sortDatasByDate } from "@/utils/sortDataUtils";
+
 const quantity = ref(0);
 const currentDate = ref("");
 const currentTime = ref("");
+const morningPill = ref(false);
+const eveningPill = ref(false);
+const middayPill = ref(false);
 const store = useStore();
 const userId = computed(() => store.state.userId);
 const lastBiberons = ref([]);
@@ -180,13 +195,19 @@ const postBiberon = () => {
       editedItem.value.id,
       parseInt(quantity.value),
       currentDate.value,
-      currentTime.value
+      currentTime.value,
+      morningPill.value,
+      middayPill.value,
+      eveningPill.value
     ).then(() => {
       updateBiberon(
         editedItem.value.id,
         parseInt(quantity.value),
         currentDate.value,
-        currentTime.value
+        currentTime.value,
+        morningPill.value,
+        middayPill.value,
+        eveningPill.value
       ).then(() => {
         getBiberons(userId.value).then((biberons) => {
           lastBiberons.value = biberons;
@@ -200,7 +221,10 @@ const postBiberon = () => {
       userId.value,
       quantity.value,
       currentDate.value,
-      currentTime.value
+      currentTime.value,
+      morningPill.value,
+      middayPill.value,
+      eveningPill.value
     ).then(() => {
       getBiberons(userId.value).then((biberons) => {
         lastBiberons.value = biberons;
@@ -238,12 +262,14 @@ const updateCurrentDateTime = () => {
 
 const onEdit = (item) => {
   openDialog();
-  editedItem.value = { ...item }; // Copie des valeurs de l'élément édité
+  editedItem.value = { ...item };
 
-  // Mise à jour des valeurs du formulaire avec les valeurs de l'élément édité
   currentDate.value = editedItem.value.date;
   currentTime.value = editedItem.value.time;
   quantity.value = editedItem.value.quantity;
+  morningPill.value = editedItem.value.morningPill;
+  middayPill.value = editedItem.value.middayPill;
+  eveningPill.value = editedItem.value.eveningPill;
 };
 
 onMounted(() => {
@@ -251,11 +277,7 @@ onMounted(() => {
   currentTime.value = getCurrentTime();
 
   getBiberons(userId.value).then((biberons) => {
-    lastBiberons.value = biberons.sort((a, b) => {
-      const dateA = new Date(a.date + " " + a.time);
-      const dateB = new Date(b.date + " " + b.time);
-      return dateB - dateA;
-    });
+    lastBiberons.value = sortDatasByDate(biberons);
     aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
   });
 });
