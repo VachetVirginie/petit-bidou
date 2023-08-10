@@ -103,38 +103,44 @@
         <div class="bar-date text-sm">{{ formatDate(item.date, "dd/MM") }}</div>
       </div>
     </div>
-    <v-table v-if="lastBiberons.length > 0" class="my-8">
-      <thead>
-        <tr>
-          <th class="text-center">Date</th>
-          <th class="text-center">Heure</th>
-          <th class="text-center">Quantité</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in lastBiberons" :key="item.date">
-          <td>{{ formatDate(item.date, "dd/MM") }}</td>
-          <td>{{ item.time }}</td>
-          <td>{{ item.quantity }} ml</td>
-          <td>
-            <v-btn
-              density="compact"
-              icon="mdi-delete"
-              class="ma-4"
-              @click="onDeleteBiberon(item.id)"
-            ></v-btn>
-            <v-btn
-              density="compact"
-              icon="mdi-pencil-outline"
-              @click="onEdit(item)"
-            ></v-btn>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
+    <template
+      v-for="(groupedBiberons, date) in groupedLastBiberons"
+      :key="date"
+    >
+      <h2 class="text-2xl font-bold mt-8 mb-4">
+        {{ formatDate(date, "dd/MM") }}
+      </h2>
+      <v-table class="my-8">
+        <thead>
+          <tr>
+            <th class="text-center">Heure</th>
+            <th class="text-center">Quantité</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in groupedBiberons" :key="item.date">
+            <td>{{ item.time }}</td>
+            <td>{{ item.quantity }} ml</td>
+            <td>
+              <v-btn
+                density="compact"
+                icon="mdi-delete"
+                class="ma-4"
+                @click="onDeleteBiberon(item.id)"
+              ></v-btn>
+              <v-btn
+                density="compact"
+                icon="mdi-pencil-outline"
+                @click="onEdit(item)"
+              ></v-btn>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </template>
     <v-alert
-      v-else
+      v-if="lastBiberons.length === 0"
       type="error"
       text="Pas d'éléments enregistrés"
       width="300"
@@ -271,6 +277,20 @@ const onEdit = (item) => {
   middayPill.value = editedItem.value.middayPill;
   eveningPill.value = editedItem.value.eveningPill;
 };
+
+const groupedLastBiberons = computed(() => {
+  const groups = {};
+
+  lastBiberons.value.forEach((item) => {
+    const date = formatDate(item.date, "yyyy-MM-dd");
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(item);
+  });
+
+  return groups;
+});
 
 onMounted(() => {
   currentDate.value = getCurrentDate();
