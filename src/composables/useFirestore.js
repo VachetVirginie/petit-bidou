@@ -25,7 +25,7 @@ export default () => {
     createUserWithEmailAndPassword(auth, userEmail.value, password.value)
       .then(() => {
         setTimeout(() => {
-          window.location.href = "/about";
+          window.location.href = "/biberons";
         }, 1000);
       })
       .catch((error) => {
