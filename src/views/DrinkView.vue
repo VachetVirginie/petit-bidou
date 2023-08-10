@@ -115,6 +115,7 @@
           <tr>
             <th class="text-center">Heure</th>
             <th class="text-center">Quantité</th>
+            <th class="text-center">Medicaments</th>
             <th class="text-center">Action</th>
           </tr>
         </thead>
@@ -123,10 +124,32 @@
             <td>{{ item.time }}</td>
             <td>{{ item.quantity }} ml</td>
             <td>
+              <span
+                class="pill-dot"
+                :class="{
+                  'pill-dot-green': item.morningPill,
+                  'pill-dot-red': !item.morningPill,
+                }"
+              ></span>
+              <span
+                class="pill-dot"
+                :class="{
+                  'pill-dot-green': item.middayPill,
+                  'pill-dot-red': !item.middayPill,
+                }"
+              ></span>
+              <span
+                class="pill-dot"
+                :class="{
+                  'pill-dot-green': item.eveningPill,
+                  'pill-dot-red': !item.eveningPill,
+                }"
+              ></span>
+            </td>
+            <td>
               <v-btn
                 density="compact"
                 icon="mdi-delete"
-                class="ma-4"
                 @click="onDeleteBiberon(item.id)"
               ></v-btn>
               <v-btn
@@ -173,7 +196,7 @@ import {
 
 import useFirestore from "@/composables/useFirestore";
 
-import { sortDatasByDate } from "@/utils/sortDataUtils";
+import { groupDatasByDate, sortDatasByDate } from "@/utils/dataUtils";
 
 const quantity = ref(0);
 const currentDate = ref("");
@@ -279,17 +302,7 @@ const onEdit = (item) => {
 };
 
 const groupedLastBiberons = computed(() => {
-  const groups = {};
-
-  lastBiberons.value.forEach((item) => {
-    const date = formatDate(item.date, "yyyy-MM-dd");
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(item);
-  });
-
-  return groups;
+  return groupDatasByDate(lastBiberons.value);
 });
 
 onMounted(() => {
@@ -314,5 +327,18 @@ onMounted(() => {
 
 .bar-date {
   @apply mt-1 text-center;
+}
+
+.pill-dot {
+  background-color: green;
+  width: 8px;
+  height: 8px;
+  border-radius: 6px;
+  margin-right: 4px;
+  display: inline-block;
+}
+
+.pill-dot-red {
+  background-color: red;
 }
 </style>
