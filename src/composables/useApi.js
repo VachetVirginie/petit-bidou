@@ -7,7 +7,15 @@ import {
   collection,
 } from "firebase/firestore";
 
-export function postBiberon(userId, quantity, currentDate, currentTime) {
+export function postBiberon(
+  userId,
+  quantity,
+  currentDate,
+  currentTime,
+  morningPill,
+  middayPill,
+  eveningPill
+) {
   return setDoc(
     doc(db, "biberons", (userId, Math.random() + 1).toString(36).substring(4)),
     {
@@ -15,6 +23,9 @@ export function postBiberon(userId, quantity, currentDate, currentTime) {
       quantity: parseInt(quantity),
       date: currentDate,
       time: currentTime,
+      morningPill: morningPill,
+      middayPill: middayPill,
+      eveningPill: eveningPill,
     },
     { merge: true }
   );
@@ -36,7 +47,10 @@ export async function updateBiberon(
   biberonId,
   quantity,
   currentDate,
-  currentTime
+  currentTime,
+  morningPill,
+  middayPill,
+  eveningPill
 ) {
   return setDoc(
     doc(db, "biberons", biberonId),
@@ -44,6 +58,9 @@ export async function updateBiberon(
       quantity: quantity,
       date: currentDate,
       time: currentTime,
+      morningPill: morningPill,
+      middayPill: middayPill,
+      eveningPill: eveningPill,
     },
     { merge: true }
   );

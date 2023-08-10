@@ -55,6 +55,12 @@
                     required
                   ></v-text-field>
 
+                  <div class="inline">
+                    <v-checkbox v-model="morningPill" label="Fer1"></v-checkbox>
+                    <v-checkbox v-model="middayPill" label="Vit"></v-checkbox>
+                    <v-checkbox v-model="eveningPill" label="Fer2"></v-checkbox>
+                  </div>
+
                   <v-btn
                     type="submit"
                     block
@@ -93,38 +99,67 @@
         <div class="bar-date text-sm">{{ formatDate(item.date, "dd/MM") }}</div>
       </div>
     </div>
-    <v-table v-if="lastBiberons.length > 0" class="my-8">
-      <thead>
-        <tr>
-          <th class="text-center">Date</th>
-          <th class="text-center">Heure</th>
-          <th class="text-center">Quantité</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in lastBiberons" :key="item.date">
-          <td>{{ formatDate(item.date, "dd/MM") }}</td>
-          <td>{{ item.time }}</td>
-          <td>{{ item.quantity }} ml</td>
-          <td>
-            <v-btn
-              density="compact"
-              icon="mdi-delete"
-              class="ma-4"
-              @click="onDeleteBiberon(item.id)"
-            ></v-btn>
-            <v-btn
-              density="compact"
-              icon="mdi-pencil-outline"
-              @click="onEdit(item)"
-            ></v-btn>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
+    <template
+      v-for="(groupedBiberons, date) in groupedLastBiberons"
+      :key="date"
+    >
+      <h2 class="text-2xl font-bold mt-8 mb-4">
+        {{ formatDate(date, "dd/MM") }}
+      </h2>
+      <v-table class="my-8">
+        <thead>
+          <tr>
+            <th class="text-center">Heure</th>
+            <th class="text-center">Quantité</th>
+            <th class="text-center">Medicaments</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in groupedBiberons" :key="item.date">
+            <td>{{ item.time }}</td>
+            <td>{{ item.quantity }} ml</td>
+            <td>
+              <span
+                class="pill-dot"
+                :class="{
+                  'pill-dot-green': item.morningPill,
+                  'pill-dot-red': !item.morningPill,
+                }"
+              ></span>
+              <span
+                class="pill-dot"
+                :class="{
+                  'pill-dot-green': item.middayPill,
+                  'pill-dot-red': !item.middayPill,
+                }"
+              ></span>
+              <span
+                class="pill-dot"
+                :class="{
+                  'pill-dot-green': item.eveningPill,
+                  'pill-dot-red': !item.eveningPill,
+                }"
+              ></span>
+            </td>
+            <td>
+              <v-btn
+                density="compact"
+                icon="mdi-delete"
+                @click="onDeleteBiberon(item.id)"
+              ></v-btn>
+              <v-btn
+                density="compact"
+                icon="mdi-pencil-outline"
+                @click="onEdit(item)"
+              ></v-btn>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </template>
     <v-alert
-      v-else
+      v-if="lastBiberons.length === 0"
       type="error"
       text="Pas d'éléments enregistrés"
       width="300"
@@ -157,9 +192,14 @@ import {
 
 import useFirestore from "@/composables/useFirestore";
 
+import { groupDatasByDate, sortDatasByDate } from "@/utils/dataUtils";
+
 const quantity = ref(0);
 const currentDate = ref("");
 const currentTime = ref("");
+const morningPill = ref(false);
+const eveningPill = ref(false);
+const middayPill = ref(false);
 const store = useStore();
 const userId = computed(() => store.state.userId);
 const lastBiberons = ref([]);
@@ -180,13 +220,19 @@ const postBiberon = () => {
       editedItem.value.id,
       parseInt(quantity.value),
       currentDate.value,
-      currentTime.value
+      currentTime.value,
+      morningPill.value,
+      middayPill.value,
+      eveningPill.value
     ).then(() => {
       updateBiberon(
         editedItem.value.id,
         parseInt(quantity.value),
         currentDate.value,
-        currentTime.value
+        currentTime.value,
+        morningPill.value,
+        middayPill.value,
+        eveningPill.value
       ).then(() => {
         getBiberons(userId.value).then((biberons) => {
           lastBiberons.value = biberons;
@@ -200,7 +246,10 @@ const postBiberon = () => {
       userId.value,
       quantity.value,
       currentDate.value,
-      currentTime.value
+      currentTime.value,
+      morningPill.value,
+      middayPill.value,
+      eveningPill.value
     ).then(() => {
       getBiberons(userId.value).then((biberons) => {
         lastBiberons.value = biberons;
@@ -238,24 +287,26 @@ const updateCurrentDateTime = () => {
 
 const onEdit = (item) => {
   openDialog();
-  editedItem.value = { ...item }; // Copie des valeurs de l'élément édité
+  editedItem.value = { ...item };
 
-  // Mise à jour des valeurs du formulaire avec les valeurs de l'élément édité
   currentDate.value = editedItem.value.date;
   currentTime.value = editedItem.value.time;
   quantity.value = editedItem.value.quantity;
+  morningPill.value = editedItem.value.morningPill;
+  middayPill.value = editedItem.value.middayPill;
+  eveningPill.value = editedItem.value.eveningPill;
 };
+
+const groupedLastBiberons = computed(() => {
+  return groupDatasByDate(lastBiberons.value);
+});
 
 onMounted(() => {
   currentDate.value = getCurrentDate();
   currentTime.value = getCurrentTime();
 
   getBiberons(userId.value).then((biberons) => {
-    lastBiberons.value = biberons.sort((a, b) => {
-      const dateA = new Date(a.date + " " + a.time);
-      const dateB = new Date(b.date + " " + b.time);
-      return dateB - dateA;
-    });
+    lastBiberons.value = sortDatasByDate(biberons);
     aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
   });
 });
@@ -272,5 +323,22 @@ onMounted(() => {
 
 .bar-date {
   @apply mt-1 text-center;
+}
+
+.inline {
+  @apply flex items-center;
+}
+
+.pill-dot {
+  background-color: green;
+  width: 8px;
+  height: 8px;
+  border-radius: 6px;
+  margin-right: 4px;
+  display: inline-block;
+}
+
+.pill-dot-red {
+  background-color: red;
 }
 </style>
