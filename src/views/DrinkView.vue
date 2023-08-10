@@ -55,16 +55,12 @@
                     required
                   ></v-text-field>
 
-                  <v-checkbox
-                    v-model="morningPill"
-                    label="Fer du matin"
-                  ></v-checkbox>
-                  <v-checkbox v-model="middayPill" label="Vitamine">
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="eveningPill"
-                    label="Fer du matin"
-                  ></v-checkbox>
+                  <div class="inline">
+                    <v-checkbox v-model="morningPill" label="Fer"></v-checkbox>
+                    <v-checkbox v-model="middayPill" label="Vit"></v-checkbox>
+                    <v-checkbox v-model="eveningPill" label="Fer"></v-checkbox>
+                  </div>
+
                   <v-btn
                     type="submit"
                     block
@@ -327,6 +323,10 @@ onMounted(() => {
 
 .bar-date {
   @apply mt-1 text-center;
+}
+
+.inline {
+  @apply flex items-center;
 }
 
 .pill-dot {
