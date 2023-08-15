@@ -237,7 +237,7 @@ const postBiberon = () => {
         eveningPill.value
       ).then(() => {
         getBiberons(userId.value).then((biberons) => {
-          lastBiberons.value = biberons;
+          lastBiberons.value = sortDatasByDate(biberons);
           aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
         });
         editedItem.value = null;
@@ -254,7 +254,7 @@ const postBiberon = () => {
       eveningPill.value
     ).then(() => {
       getBiberons(userId.value).then((biberons) => {
-        lastBiberons.value = biberons;
+        lastBiberons.value = sortDatasByDate(biberons);
         aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
       });
     });
@@ -264,7 +264,7 @@ const postBiberon = () => {
 const onDeleteBiberon = (id) => {
   deleteBiberon(id).then(() => {
     getBiberons(userId.value).then((biberons) => {
-      lastBiberons.value = biberons;
+      lastBiberons.value = sortDatasByDate(biberons);
       aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
     });
   });
