@@ -82,23 +82,6 @@
         </v-card>
       </template>
     </v-dialog>
-    <h2 class="text-2xl font-bold mt-8 mb-4">Historique</h2>
-    <div class="flex justify-center items-center flex-wrap gap-8">
-      <div
-        class="chart-bar flex flex-col items-center justify-end text-white"
-        v-for="item in aggregatedBiberons"
-        :key="item.date"
-        :style="{
-          backgroundColor: getColor(item.quantity),
-          height: getBarHeight(item.quantity),
-        }"
-      >
-        <div class="bar-total text-xl font-bold mb-1">
-          {{ item.quantity }} ml
-        </div>
-        <div class="bar-date text-sm">{{ formatDate(item.date, "dd/MM") }}</div>
-      </div>
-    </div>
     <template
       v-for="(groupedBiberons, date) in groupedLastBiberons"
       :key="date"
@@ -106,6 +89,24 @@
       <h2 class="text-2xl font-bold mt-8 mb-4">
         {{ formatDate(date, "dd/MM") }}
       </h2>
+      <div class="flex justify-center items-center flex-wrap gap-8">
+        <div
+          class="chart-bar flex flex-col items-center justify-end text-white"
+          v-for="item in groupedBiberons"
+          :key="item.date"
+          :style="{
+            backgroundColor: getColor(item.quantity),
+            height: getBarHeight(item.quantity),
+          }"
+        >
+          <div class="bar-total text-xl font-bold mb-1">
+            {{ item.quantity }} ml
+          </div>
+          <div class="bar-date text-sm">
+            {{ formatDate(item.date, "dd/MM") }}
+          </div>
+        </div>
+      </div>
       <v-table class="my-8">
         <thead>
           <tr>

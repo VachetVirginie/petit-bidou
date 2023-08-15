@@ -48,7 +48,7 @@ export default () => {
       .then((userCredential) => {
         store
           .dispatch("updateUserId", userCredential.user.uid)
-          .then((r) => console.log(r));
+          .then(() => console.log(userCredential.user.uid));
         window.location.href = "/biberons";
       })
       .catch((error) => {
