@@ -1,12 +1,14 @@
 export function getColor(quantity) {
+  const maxQuantity = 800;
+  const percentage = (quantity / maxQuantity) * 100;
   let color = "";
 
-  if (quantity >= 0 && quantity <= 250) {
+  if (percentage <= 25) {
     color = "red";
-  } else if (quantity > 250 && quantity <= 500) {
+  } else if (percentage <= 50) {
     color = "orange";
-  } else if (quantity > 500 && quantity <= 600) {
-    color = "yellow";
+  } else if (percentage <= 75) {
+    color = "#dcb233";
   } else {
     color = "green";
   }
