@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex justify-end m-3">
-      <v-btn @click="onSignOut">
+      <v-btn @click="onSignOut" class="hidden sm:block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -25,7 +25,10 @@
       v-model="dialogVisible"
     >
       <template v-slot:activator="{ props }">
-        <v-btn color="success" @click="openDialog(props)" class="mb-4"
+        <v-btn
+          color="success"
+          @click="openDialog(props)"
+          class="mb-4 hidden sm:block sm:mx-auto"
           >Ajouter biberon</v-btn
         >
       </template>
@@ -165,9 +168,10 @@
       type="error"
       text="Pas d'éléments enregistrés"
       width="300"
-      class="mx-auto py-6 my-6"
+      class="py-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
     ></v-alert>
   </div>
+  <TabBar />
 </template>
 
 <script setup>
@@ -195,6 +199,7 @@ import {
 import useFirestore from "@/composables/useFirestore";
 
 import { groupDatasByDate, sortDatasByDate } from "@/utils/dataUtils";
+import TabBar from "@/components/tabBar";
 
 const quantity = ref(0);
 const currentDate = ref("");
