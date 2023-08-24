@@ -37,6 +37,7 @@
             data-tab-target=""
             role="tab"
             aria-selected="false"
+            @click="openDialog(props)"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -83,14 +84,15 @@
 </template>
 
 <script setup>
-import useFirestore from "@/composables/useFirestore";
-import { useStore } from "vuex";
+import { defineEmits } from "vue";
 
-const { signOut } = useFirestore();
-const store = useStore();
+const emit = defineEmits(["signOut", "openDialog"]);
 
 const onSignOut = () => {
-  signOut();
-  store.commit("setUserId", null);
+  emit("signOut");
+};
+
+const openDialog = (props) => {
+  emit("openDialog", props);
 };
 </script>

@@ -171,7 +171,7 @@
       class="py-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
     ></v-alert>
   </div>
-  <TabBar />
+  <TabBar @signOut="onSignOut" @openDialog="openDialog" />
 </template>
 
 <script setup>
