@@ -1,5 +1,7 @@
 <template>
-  <div class="sm:hidden sm:block fixed bottom-0 left-0 w-full bg-white">
+  <div
+    class="sm:hidden sm:block fixed bottom-0 left-0 w-full bg-white border border-top"
+  >
     <div class="relative right-0">
       <ul
         class="relative flex list-none flex-wrap rounded-xl bg-blue-gray-50/60 p-1"
