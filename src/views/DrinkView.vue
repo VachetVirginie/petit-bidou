@@ -1,5 +1,6 @@
 <template>
   <div>
+    <spin-loader v-if="isLoading" />
     <div class="d-flex justify-end m-3">
       <v-btn @click="onSignOut" class="hidden sm:block">
         <svg
@@ -164,7 +165,7 @@
       </v-table>
     </template>
     <v-alert
-      v-if="lastBiberons.length === 0"
+      v-if="lastBiberons.length === 0 && !isLoading"
       type="error"
       text="Pas d'éléments enregistrés"
       width="300"
@@ -200,6 +201,7 @@ import useFirestore from "@/composables/useFirestore";
 
 import { groupDatasByDate, sortDatasByDate } from "@/utils/dataUtils";
 import TabBar from "@/components/tabBar";
+import SpinLoader from "@/components/spinLoader";
 
 const quantity = ref(0);
 const currentDate = ref("");
@@ -214,6 +216,7 @@ const aggregatedBiberons = ref();
 const dialogVisible = ref(false);
 const editedItem = ref(null);
 const { signOut } = useFirestore();
+const isLoading = ref(false);
 
 const onSignOut = () => {
   signOut();
@@ -241,9 +244,11 @@ const postBiberon = () => {
         middayPill.value,
         eveningPill.value
       ).then(() => {
+        isLoading.value = true;
         getBiberons(userId.value).then((biberons) => {
           lastBiberons.value = sortDatasByDate(biberons);
           aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+          isLoading.value = false;
         });
         editedItem.value = null;
       });
@@ -258,9 +263,11 @@ const postBiberon = () => {
       middayPill.value,
       eveningPill.value
     ).then(() => {
+      isLoading.value = true;
       getBiberons(userId.value).then((biberons) => {
         lastBiberons.value = sortDatasByDate(biberons);
         aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+        isLoading.value = false;
       });
     });
   }
@@ -311,10 +318,11 @@ const groupedLastBiberons = computed(() => {
 onMounted(() => {
   currentDate.value = getCurrentDate();
   currentTime.value = getCurrentTime();
-
+  isLoading.value = true;
   getBiberons(userId.value).then((biberons) => {
     lastBiberons.value = sortDatasByDate(biberons);
     aggregatedBiberons.value = aggregateQuantities(lastBiberons.value);
+    isLoading.value = false;
   });
 });
 </script>
