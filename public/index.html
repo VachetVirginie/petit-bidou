@@ -4,7 +4,15 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="icon" href="icons/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <!-- Chrome -->
+    <link rel="icon" sizes="192x192" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png"><!-- Safari -->
+    <link rel="apple-touch-startup-image" href="logo.png"><!-- IE -->
+    <meta name="msapplication-square310x310logo" content="logo.png"> <!-- Chrome -->
+    <meta name="theme-color" content="#ffffff"> <!-- Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#ffffff">
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
@@ -12,6 +20,5 @@
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
-    <!-- built files will be auto injected -->
   </body>
 </html>
